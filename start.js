@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-// import { startIncomeTaxAutomation } from "./index.js";
+import { startIncomeTaxAutomation } from "./index.js";
 
 process.on("exit", (code) => {
   console.log("Process exiting with code:", code);
