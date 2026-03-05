@@ -26,6 +26,7 @@
     "file-type": "^21.3.0",
     "fs": "^0.0.1-security",
     "node-fetch": "^3.3.2",
+    "pdfjs-dist": "^5.5.207",
     "playwright": "^1.58.2",
     "redis": "^5.11.0",
     "ws": "^8.19.0",
