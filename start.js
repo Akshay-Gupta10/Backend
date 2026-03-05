@@ -2,18 +2,6 @@ import express from "express";
 import cors from "cors";
 import { startIncomeTaxAutomation } from "./index.js";
 
-process.on("exit", (code) => {
-  console.log("Process exiting with code:", code);
-});
-
-process.on("uncaughtException", (err) => {
-  console.error("Uncaught Exception:", err);
-});
-
-process.on("unhandledRejection", (err) => {
-  console.error("Unhandled Rejection:", err);
-});
-
 const app = express();
 app.use(cors());
 app.use(express.json());
