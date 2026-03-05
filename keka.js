@@ -163,5 +163,14 @@ export async function runAutomationKeka(stagehand, page, sessionId,meta) {
 
     await page.waitForTimeout(5000);
 
-    return downloadFromS3(sessionId,meta)
+    const status=await downloadFromS3(sessionId,meta)
+
+    try {
+        await page.context().browser().close();
+        console.log("Browser session closed successfully.");
+    } catch (err) {
+        console.log("Failed to close browser session:", err.message);
+    }
+
+    return status;
 }
