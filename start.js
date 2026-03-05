@@ -1,9 +1,3 @@
-import dotenv from "dotenv";
-
-dotenv.config({
-  path: "/home/ubuntu/Backend/.env"
-});
-
 import express from "express";
 import cors from "cors";
 import { startIncomeTaxAutomation } from "./index.js";
@@ -13,8 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 const sessionResults = new Map();
-console.log("API KEY:", process.env.BROWSERBASE_API_KEY);
-console.log("PROJECT:", process.env.BROWSERBASE_PROJECT_ID);
+
 app.post("/run-income-tax-download", async (req, res) => {
   try {
     const {
