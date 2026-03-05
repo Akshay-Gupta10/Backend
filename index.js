@@ -1,5 +1,5 @@
 import "dotenv/config";
-
+import { Stagehand } from "@browserbasehq/stagehand";
 
 import { runAutomationKeka } from "./keka.js";
 import { runAutomationEasyHRMS } from "./easyhrms.js";
@@ -9,7 +9,17 @@ const KEKA_URL = "https://app.keka.com";
 const EASY_HRMS_URL = "https://easyhrms.in/login/";
 const RAPID_HR_URL = "https://login.rapidhr.com/";
 
-export async function startIncomeTaxAutomation(type,stagehand, meta) {
+export async function startIncomeTaxAutomation(type, meta) {
+  const stagehand = new Stagehand({
+    env: "BROWSERBASE",
+    apiKey: process.env.BROWSERBASE_API_KEY,
+    projectId: process.env.BROWSERBASE_PROJECT_ID,
+    model: {
+      modelName: "google/gemini-2.5-flash",
+      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    },
+  });
+
   await stagehand.init();
   const page = await stagehand.context.newPage();
 
@@ -59,6 +69,17 @@ export async function startIncomeTaxAutomation(type,stagehand, meta) {
   }
   else if (type == "rapidhr") {
     filePromise = runAutomationRapidHR(stagehand, page, sessionId, meta)
+  }
+
+  if (filePromise) {
+    filePromise.finally(async () => {
+      try {
+        await stagehand.context.close();
+        console.log(`BrowserBase session ${sessionId} closed automatically.`);
+      } catch (err) {
+        console.error(`Failed to close browser for session ${sessionId}:`, err);
+      }
+    });
   }
 
   return { liveViewUrl, sessionId, filePromise };

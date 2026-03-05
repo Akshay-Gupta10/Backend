@@ -1,22 +1,12 @@
 import express from "express";
 import cors from "cors";
 import { startIncomeTaxAutomation } from "./index.js";
-import { Stagehand } from "@browserbasehq/stagehand";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const sessionResults = new Map();
-const stagehand = new Stagehand({
-    env: "BROWSERBASE",
-    apiKey: process.env.BROWSERBASE_API_KEY,
-    projectId: process.env.BROWSERBASE_PROJECT_ID,
-    model: {
-      modelName: "google/gemini-2.5-flash",
-      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY
-    },
-  });
 
 app.post("/run-income-tax-download", async (req, res) => {
   try {
@@ -31,7 +21,7 @@ app.post("/run-income-tax-download", async (req, res) => {
     } = req.body;
 
     const { liveViewUrl, sessionId, filePromise } =
-      await startIncomeTaxAutomation(type, stagehand,{
+      await startIncomeTaxAutomation(type, {
         userId,
         token,
         financialYearId,
@@ -40,16 +30,14 @@ app.post("/run-income-tax-download", async (req, res) => {
         externalId
       });
 
-  sessionResults.set(sessionId, { stagehand });
-  filePromise
-  .then(() => {
-    const sessionData = sessionResults.get(sessionId);
-    sessionData.status = "uploaded";
-  })
-  .catch((err) => {
-    console.log("hloooooo",filePromise)
-    console.error("Automation failed:", err);
-  });
+    filePromise
+      .then(() => {
+        sessionResults.set(sessionId, "uploaded");
+      })
+      .catch((err) => {
+        console.log("hloooooo", filePromise)
+        console.error("Automation failed:", err);
+      });
 
     res.json({ liveViewUrl, sessionId });
 
@@ -67,25 +55,6 @@ app.get("/check-status/:sessionId", (req, res) => {
   }
 
   res.json({ ready: true });
-});
-
-app.post("/close-session/:sessionId", async (req, res) => {
-  const sessionId = req.params.sessionId;
-
-  try {
-    const sessionData = sessionResults.get(sessionId);
-    if (sessionData?.stagehand) {
-      await sessionData.stagehand.context.close(); // actually close the browser
-      console.log(`Session ${sessionId} closed successfully.`);
-      sessionResults.delete(sessionId);
-      res.json({ success: true });
-    } else {
-      res.status(404).json({ message: "Session not found" });
-    }
-  } catch (err) {
-    console.error("Error closing session:", err);
-    res.status(500).json({ message: "Failed to close session" });
-  }
 });
 
 app.listen(4000, () => {
