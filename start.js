@@ -30,9 +30,11 @@ app.post("/run-income-tax-download", async (req, res) => {
         externalId
       });
 
+  sessionResults.set(sessionId, { stagehand });
   filePromise
   .then(() => {
-    sessionResults.set(sessionId, "uploaded");
+    const sessionData = sessionResults.get(sessionId);
+    sessionData.status = "uploaded";
   })
   .catch((err) => {
     console.log("hloooooo",filePromise)
@@ -63,7 +65,7 @@ app.post("/close-session/:sessionId", async (req, res) => {
   try {
     const sessionData = sessionResults.get(sessionId);
     if (sessionData?.stagehand) {
-      await sessionData.stagehand.context.close();
+      await sessionData.stagehand.context.close(); // actually close the browser
       console.log(`Session ${sessionId} closed successfully.`);
       sessionResults.delete(sessionId);
       res.json({ success: true });
