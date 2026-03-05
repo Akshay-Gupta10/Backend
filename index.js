@@ -1,5 +1,5 @@
-import { Stagehand } from "@browserbasehq/stagehand";
 import "dotenv/config";
+import { Stagehand } from "@browserbasehq/stagehand";
 
 import { runAutomationKeka } from "./keka.js";
 import { runAutomationEasyHRMS } from "./easyhrms.js";
