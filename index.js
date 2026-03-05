@@ -71,17 +71,6 @@ export async function startIncomeTaxAutomation(type, meta) {
     filePromise = runAutomationRapidHR(stagehand, page, sessionId, meta)
   }
 
-  if (filePromise) {
-    filePromise.finally(async () => {
-      try {
-        await stagehand.context.close();
-        console.log(`BrowserBase session ${sessionId} closed automatically.`);
-      } catch (err) {
-        console.error(`Failed to close browser for session ${sessionId}:`, err);
-      }
-    });
-  }
-
   return { liveViewUrl, sessionId, filePromise };
 }
 
