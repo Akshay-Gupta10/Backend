@@ -126,41 +126,50 @@ export async function runAutomationKeka(stagehand, page, sessionId,meta) {
     console.log("Logged in successfully");
     await page.waitForTimeout(7000);
 
-    await stagehand.act(`Click on the "My Finances" option in the left sidebar`);
+    const res1=await stagehand.act(`Click on the "My Finances" option in the left sidebar`);
+    console.log("res1",res1.cacheStatus);
+    
     await page.waitForTimeout(2000);
 
     await closePopupIfPresent(page)
     await page.waitForTimeout(2000);
 
-    await stagehand.act("Click on the My Pay tab");
+    const res2=await stagehand.act("Click on the My Pay tab");
+    console.log("res2",res2.cacheStatus);
+
     await page.waitForTimeout(2000);
 
-    await stagehand.act(`
+    const res3=await stagehand.act(`
             Within the My Pay page content,
             find the horizontal tab list that contains tabs like My Salary and Payslips and Income Tax.
             Click the tab labeled "Payslips".
         `);
-
+    console.log("res3",res3.cacheStatus);
+    
     await page.waitForTimeout(2000);
 
     try {
-        await stagehand.act(`On the Payslips page, locate the text "Payslip has not been released yet by the admin"`);
+        const res4=await stagehand.act(`On the Payslips page, locate the text "Payslip has not been released yet by the admin"`);
         console.log("Current month payslip not found. Trying previous month...");
+        console.log("res4",res4.cacheStatus);
 
         const today = new Date();
         const currentMonthNumber = today.getMonth();
         const prevMonth = await getPrevMonth(currentMonthNumber);
 
-        await stagehand.act(`Click button having text as "${prevMonth}"`);
+        const res5=await stagehand.act(`Click button having text as "${prevMonth}"`);
+        console.log("res5",res5.cacheStatus);
+
         await page.waitForTimeout(2000);
 
     } 
     catch (err) {
     }
         
-    await stagehand.act(`On the Payslips page, locate the download button having text "Pay Slip", 
+    const res6=await stagehand.act(`On the Payslips page, locate the download button having text "Pay Slip", 
       click on that button.`);
-
+    console.log("res6",res6.cacheStatus);
+    
     await page.waitForTimeout(5000);
 
     return downloadFromS3(sessionId,meta)
