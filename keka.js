@@ -127,6 +127,7 @@ export async function runAutomationKeka(stagehand, page, sessionId,meta) {
     await page.waitForTimeout(7000);
 
     const res1=await stagehand.act(`Click on the "My Finances" option in the left sidebar`);
+    console.log("RES1",res1);
     console.log("res1",res1.cacheStatus);
     
     await page.waitForTimeout(2000);
