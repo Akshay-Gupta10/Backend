@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Stagehand } from "@browserbasehq/stagehand";
+
 
 import { runAutomationKeka } from "./keka.js";
 import { runAutomationEasyHRMS } from "./easyhrms.js";
@@ -9,17 +9,7 @@ const KEKA_URL = "https://app.keka.com";
 const EASY_HRMS_URL = "https://easyhrms.in/login/";
 const RAPID_HR_URL = "https://login.rapidhr.com/";
 
-export async function startIncomeTaxAutomation(type, meta) {
-  const stagehand = new Stagehand({
-    env: "BROWSERBASE",
-    apiKey: process.env.BROWSERBASE_API_KEY,
-    projectId: process.env.BROWSERBASE_PROJECT_ID,
-    model: {
-      modelName: "google/gemini-2.5-flash",
-      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY
-    },
-  });
-
+export async function startIncomeTaxAutomation(type,stagehand, meta) {
   await stagehand.init();
   const page = await stagehand.context.newPage();
 

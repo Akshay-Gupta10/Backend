@@ -1,12 +1,22 @@
 import express from "express";
 import cors from "cors";
 import { startIncomeTaxAutomation } from "./index.js";
+import { Stagehand } from "@browserbasehq/stagehand";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const sessionResults = new Map();
+const stagehand = new Stagehand({
+    env: "BROWSERBASE",
+    apiKey: process.env.BROWSERBASE_API_KEY,
+    projectId: process.env.BROWSERBASE_PROJECT_ID,
+    model: {
+      modelName: "google/gemini-2.5-flash",
+      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    },
+  });
 
 app.post("/run-income-tax-download", async (req, res) => {
   try {
@@ -21,7 +31,7 @@ app.post("/run-income-tax-download", async (req, res) => {
     } = req.body;
 
     const { liveViewUrl, sessionId, filePromise } =
-      await startIncomeTaxAutomation(type, {
+      await startIncomeTaxAutomation(type, stagehand,{
         userId,
         token,
         financialYearId,
