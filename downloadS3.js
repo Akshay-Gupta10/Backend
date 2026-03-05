@@ -312,7 +312,7 @@ export async function downloadFromS3(sessionId, meta) {
     }
   }
 
-  // 4️⃣ Initiate upload
+   // 1️⃣ Initiate Upload
   const authHeaders = meta.token
     ? {
         "Content-Type": "application/json",
@@ -323,41 +323,62 @@ export async function downloadFromS3(sessionId, meta) {
       }
     : { "Content-Type": "application/json" };
 
-  const initiateResp = await fetch(process.env.INITIATE_UPLOAD_API, {
-    method: "POST",
-    headers: authHeaders,
-    body: JSON.stringify({
+  const initiateResp = await fetch(
+    process.env.INITIATE_UPLOAD_API,
+    {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
       document_type: "PAYSLIP",
       owner_of_document: meta.userId,
       uploaded_by: meta.userId,
       financial_year_id: meta.financialYearId,
       file_name: `AutomationPayslip.${extension}`
-    }),
-  });
+    })
+  }
+);
 
-  const initiateData = await initiateResp.json();
-  const { document_identifier, pre_signed_s3_url_for_upload } = initiateData;
+// console.log("hiii",await initiateResp.text())
+const initiateText = await initiateResp.text();
+console.log("hiiiii",initiateText)
 
-  // 5️⃣ Upload to S3
-  await fetch(pre_signed_s3_url_for_upload, {
-    method: "PUT",
-    headers: { "Content-Type": contentType },
-    body: finalBuffer,
-  });
+console.log("initiate ho gya")
+const initiateData = JSON.parse(initiateText);
+const {
+  document_identifier,
+  pre_signed_s3_url_for_upload
+} = initiateData;
 
-  // 6️⃣ Finalize
+
+console.log("pre signed mil gya")
+console.log("pre signed is",pre_signed_s3_url_for_upload)
+
+// 2️⃣ Upload To Presigned URL
+await fetch(pre_signed_s3_url_for_upload, {
+  method: "PUT",
+  headers: {
+    "Content-Type": contentType,
+  },
+  body: finalBuffer
+});
+console.log("upload kr dia")
+
+// 3️⃣ Finalize Upload
   await fetch(process.env.FINALIZE_UPLOAD_API, {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({
-      user_id: meta.userId,
-      financial_year_id: meta.financialYearId,
-      month, // use extracted month here
-      company_id: meta.companyId,
-      salary_income_external_id: meta.externalId,
-      document_identifier
-    }),
-  });
+    user_id: meta.userId,
+    financial_year_id: meta.financialYearId,
+    month: meta.month,
+    company_id: meta.companyId,
+    salary_income_external_id: meta.externalId,
+    document_identifier
+  })
+});
 
-  return { success: true };
+console.log("sb ho gya")
+  return {
+    success: true,
+  };
 }
