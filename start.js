@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "/home/ubuntu/Backend/.env"
+});
+
 import express from "express";
 import cors from "cors";
 import { startIncomeTaxAutomation } from "./index.js";
