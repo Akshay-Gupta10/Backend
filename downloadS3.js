@@ -252,7 +252,7 @@ async function detectFile(buffer) {
 }
 
 async function extractMonthFromPdfBuffer(buffer) {
-  const pdf = await pdfjs.getDocument({ data: buffer }).promise;
+  const pdf = await pdfjs.getDocument({ data: new Uint8Array(buffer) }).promise;
 
   let text = "";
   for (let i = 1; i <= pdf.numPages; i++) {
