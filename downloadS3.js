@@ -189,12 +189,21 @@ console.log("upload kr dia")
     body: JSON.stringify({
     user_id: meta.userId,
     financial_year_id: meta.financialYearId,
-    month:month,
+    month,
     company_id: meta.companyId,
     salary_income_external_id: meta.externalId,
     document_identifier
   })
 });
+
+console.log("Payload:", JSON.stringify({
+  user_id: meta.userId,
+  financial_year_id: meta.financialYearId,
+  month,
+  company_id: meta.companyId,
+  salary_income_external_id: meta.externalId,
+  document_identifier
+}, null, 2));
 
 let result;
 
