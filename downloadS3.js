@@ -196,24 +196,9 @@ console.log("upload kr dia")
   })
 });
 
-console.log("Payload:", JSON.stringify({
-  user_id: meta.userId,
-  financial_year_id: meta.financialYearId,
-  month,
-  company_id: meta.companyId,
-  salary_income_external_id: meta.externalId,
-  document_identifier
-}, null, 2));
+let result= await response.json();
 
-let result;
-
-try {
-  result = await response.json();
-} catch {
-  result = await response.text();
-}
-
-console.log("Status Code:", response.status);
+// console.log("Status Code:", response.status);
 console.log("Message:", result);
 
 console.log("sb ho gya")
