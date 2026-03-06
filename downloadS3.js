@@ -196,7 +196,7 @@ console.log("upload kr dia")
   })
 });
 
-let result= await response.json();
+let result= await response.text();
 
 // console.log("Status Code:", response.status);
 console.log("Message:", result);
