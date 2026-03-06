@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { startIncomeTaxAutomation } from "./index.js";
+import { getStagehand } from "./stagehandManager.js";
 
 const app = express();
 app.use(cors());
@@ -35,7 +36,6 @@ app.post("/run-income-tax-download", async (req, res) => {
         sessionResults.set(sessionId, "uploaded");
       })
       .catch((err) => {
-        console.log("hloooooo", filePromise)
         console.error("Automation failed:", err);
       });
 
@@ -56,6 +56,10 @@ app.get("/check-status/:sessionId", (req, res) => {
 
   res.json({ ready: true });
 });
+
+(async () => {
+  await getStagehand();
+})();
 
 app.listen(4000, () => {
   console.log("Server running on port 4000");

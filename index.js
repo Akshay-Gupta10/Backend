@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Stagehand } from "@browserbasehq/stagehand";
+import { getStagehand } from "./stagehandManager.js";
 
 import { runAutomationKeka } from "./keka.js";
 import { runAutomationEasyHRMS } from "./easyhrms.js";
@@ -10,17 +10,7 @@ const EASY_HRMS_URL = "https://easyhrms.in/login/";
 const RAPID_HR_URL = "https://login.rapidhr.com/";
 
 export async function startIncomeTaxAutomation(type, meta) {
-  const stagehand = new Stagehand({
-    env: "BROWSERBASE",
-    apiKey: process.env.BROWSERBASE_API_KEY,
-    projectId: process.env.BROWSERBASE_PROJECT_ID,
-    model: {
-      modelName: "google/gemini-2.5-flash",
-      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY
-    },
-  });
-
-  await stagehand.init();
+  const stagehand = await getStagehand();
   const page = await stagehand.context.newPage();
 
   if (type == "keka") {
@@ -74,7 +64,7 @@ export async function startIncomeTaxAutomation(type, meta) {
   if (filePromise) {
     filePromise = filePromise.finally(async () => {
     try {
-      await stagehand.close();
+      await page.close();
       console.log(`BrowserBase session ${sessionId} closed.`);
     } catch (err) {
       console.error(`Failed to close session ${sessionId}`, err);
