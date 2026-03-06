@@ -183,18 +183,34 @@ await fetch(pre_signed_s3_url_for_upload, {
 console.log("upload kr dia")
 
 // 3️⃣ Finalize Upload
-  await fetch(process.env.FINALIZE_UPLOAD_API, {
+  const response=await fetch(process.env.FINALIZE_UPLOAD_API, {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({
     user_id: meta.userId,
     financial_year_id: meta.financialYearId,
-    month,
+    month:month,
     company_id: meta.companyId,
     salary_income_external_id: meta.externalId,
     document_identifier
   })
 });
+
+let result;
+
+try {
+  result = await response.json();
+} catch {
+  result = await response.text();
+}
+
+console.log("Status Code:", response.status);
+console.log("Message:", result);
+
+if (!response.ok) {
+  throw new Error(`API failed: ${response.status}`);
+}
+
 
 console.log("sb ho gya")
   return {
