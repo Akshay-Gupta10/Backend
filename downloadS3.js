@@ -125,8 +125,9 @@ export async function downloadFromS3(sessionId, meta) {
     try {
       const detectedMonth = await extractMonthFromPdfBuffer(finalBuffer);
       month = normalizeMonth(detectedMonth);
-      console.log("Detected month from PDF:", month);
-      meta.month=month;
+      console.log("Detected month from PDF:", month)
+      console.log("actaual month from PDF:", meta.month)
+
     } catch (err) {
       console.warn("Failed to detect month from PDF, using meta:", err.message);
     }
@@ -184,13 +185,14 @@ await fetch(pre_signed_s3_url_for_upload, {
 console.log("upload kr dia")
 
 // 3️⃣ Finalize Upload
+  console.log("metamonth",meta.month)
   const response=await fetch(process.env.FINALIZE_UPLOAD_API, {
     method: "POST",
     headers: authHeaders,
     body: JSON.stringify({
     user_id: meta.userId,
     financial_year_id: meta.financialYearId,
-    month:meta.month,
+    month: meta.month,
     company_id: meta.companyId,
     salary_income_external_id: meta.externalId,
     document_identifier
